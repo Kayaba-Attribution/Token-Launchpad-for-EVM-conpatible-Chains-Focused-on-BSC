@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import * as React from 'react';
 import { styled } from '@material-ui/core/styles';
@@ -116,7 +115,7 @@ const RightPanel = () => {
 
 function BasicGrid() {
   return (
-	  <div style={{marginTop: '3vh',backgroundColor: 'gray',}}>
+	  <div style={{marginTop: '3vh',backgroundColor: 'gray',height: '100vh',}}>
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
         <LeftPanel/>
