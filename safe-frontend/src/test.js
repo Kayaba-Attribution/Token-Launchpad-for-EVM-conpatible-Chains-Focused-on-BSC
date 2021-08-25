@@ -50,7 +50,7 @@ const SaleDetails = ({id,supply,presale,liquidity,softcap}) => {
 var provider;
 var signer;
 var accounts;
-
+//test
 async function connect (){
 
   try {
