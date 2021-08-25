@@ -1,18 +1,17 @@
 
 
-import { ethers } from "/js/ethers_library.js";
+import { ethers } from "./ethers_library.js";
 
 console.log("Ethers imported success")
 
 // A Web3Provider wraps a standard Web3 provider, which is
 // what Metamask injects as window.ethereum into each page
 
-var provider;
 
 // The Metamask plugin also allows signing transactions to
 // send ether and pay to change state within the blockchain.
 // For this, you need the account signer...
-
+var provider;
 var signer;
 var accounts;
 
