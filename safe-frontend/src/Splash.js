@@ -35,7 +35,7 @@ const Splash = () => {
     const fetchSet = (async () => {
 	const response = await fetch(sheet);
 	const data=await response.json();
-	console.log(data);
+	//console.log(data);
 	const results = data.map((item)=>
 		<ItemIs>
 		<Frame>
@@ -61,6 +61,9 @@ const Splash = () => {
 	<Link to="/form"><Button variant="contained" color="primary" disableElevation>Project Form</Button></Link>
     	</Aligner>
 	<div>{display}</div>
+    	<Aligner>
+	<Link to="/profile"><Button variant="contained" color="primary" disableElevation>Example Project</Button></Link>
+    	</Aligner>
 	</>
     )
 }
