@@ -24,16 +24,16 @@ contract preSale {
     address public owner;
 
     // preSale static information
-    address public tokenAddress;
+    address private tokenAddress;
     //uint public immutable rate;
-    uint public immutable cap;
-    uint public immutable minBNBContribution;
-    uint public immutable maxBNBContribution;
+    uint private immutable cap;
+    uint private immutable minBNBContribution;
+    uint private immutable maxBNBContribution;
 
     // preSale dynamic information
-    uint public tokensAvaliable;
-    uint public weiRaised;
-    bool public capReached = false;
+    uint private tokensAvaliable;
+    uint private weiRaised;
+    bool private capReached = false;
 
     // contribution (bnb) mapping, indexing, and number of contributors 
     uint total_contributors = 0;
@@ -53,7 +53,18 @@ contract preSale {
         _;
     }
     
-
+    function owner_() public view returns (address){
+        return owner;
+    }
+    function moneyRaised() public view returns (uint){
+        return weiRaised;
+    }
+    function preSaleCompleted() public view returns (bool){
+        return capReached;
+    }
+    function tokenAddress_() public view returns (address){
+        return tokenAddress;
+    }
 
     function setTokenAddress(address _addr) public {
         // Update the value at this address
@@ -111,12 +122,11 @@ contract preSale {
             uint temp_V = contributions[contributor_indices[i]];
             (bool success, ) = payable(temp_A).call{value:temp_V}("");
             require(success, "Failed to send Ether");
-            // decrease weiRaised and delete the mappings !! THIS IS ONLY EXPERIMENTAL (CONTRACT RE-USE) !!
             weiRaised -= temp_V;
             delete contributor_indices[i];
             delete contributions[temp_A];
-            
         }
+        capReached = false;
     }
 
     function withdraw() public onlyOwner {
