@@ -80,7 +80,7 @@ async function connect (){
     }
     else{
         console.log("Unknwonn chain")
-        document.querySelector("#chain").textContent = "Unknwonn chain"
+        document.querySelector("#chain").textContent = "Unknown chain"
     }
 }
 
