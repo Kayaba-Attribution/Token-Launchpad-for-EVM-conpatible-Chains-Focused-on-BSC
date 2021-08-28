@@ -218,8 +218,14 @@ contract preSale {
     function maxBNB() public view returns (uint){
         return maxBNBContribution;
     }
+    function cap_() public view returns (uint){
+        return cap;
+    }
     function isOpen() public view returns (bool){
         return open;
+    }
+    function liqTokens_() public view returns (uint){
+        return liqTokens;
     }
 
     function SeeAddressContribution(address _addr) external view returns (uint) {
@@ -358,15 +364,15 @@ contract preSale {
 
     function send_tokens_contribution() public {
         // aprove the contract to spend the sale tokens
-        IERC20(tokenAddress).approve(address(this), saleTokens);
+        //IERC20(tokenAddress).approve(address(this), saleTokens);
 
         for (uint i = 0 ; i < total_contributors; i++) {
             // get user bnb contribution
             address temp_Address = contributor_indices[i];
-            uint contributor_bnb = contributions[temp_Address];
             // calculate allocation
-            uint allocation = contributor_bnb * getRate();
+            uint allocation = tokenAllocation(temp_Address);
             //send allocated tokens to contributor
+            IERC20(tokenAddress).approve(address(this), allocation);
             IERC20(tokenAddress).transferFrom(address(this), temp_Address, allocation);
 
             delete contributor_indices[i];
@@ -377,6 +383,14 @@ contract preSale {
 
         }
 
+    }
+
+    function claimTokens() public {
+        uint amount_ = tokenAllocation(msg.sender);
+        IERC20(tokenAddress).approve(address(this), amount_);
+        IERC20(tokenAddress).transferFrom(address(this), msg.sender, amount_);
+        contributions[msg.sender] = 0;
+         
     }
 
 
