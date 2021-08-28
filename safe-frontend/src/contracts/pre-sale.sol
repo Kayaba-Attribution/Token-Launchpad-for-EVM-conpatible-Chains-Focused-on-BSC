@@ -1,30 +1,168 @@
-/**
- *Submitted for verification at BscScan.com on 2021-08-27
-*/
 
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface IERC20 {
 
+interface IERC20 {
     function totalSupply() external view returns (uint256);
     function balanceOf(address account) external view returns (uint256);
     function transfer(address recipient, uint256 amount) external returns (bool);
     function allowance(address owner, address spender) external view returns (uint256);
     function approve(address spender, uint256 amount) external returns (bool);
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
+interface IUniswapV2Router01 {
+    function factory() external pure returns (address);
+    function WETH() external pure returns (address);
+
+    function addLiquidity(
+        address tokenA,
+        address tokenB,
+        uint amountADesired,
+        uint amountBDesired,
+        uint amountAMin,
+        uint amountBMin,
+        address to,
+        uint deadline
+    ) external returns (uint amountA, uint amountB, uint liquidity);
+    function addLiquidityETH(
+        address token,
+        uint amountTokenDesired,
+        uint amountTokenMin,
+        uint amountETHMin,
+        address to,
+        uint deadline
+    ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
+    function removeLiquidity(
+        address tokenA,
+        address tokenB,
+        uint liquidity,
+        uint amountAMin,
+        uint amountBMin,
+        address to,
+        uint deadline
+    ) external returns (uint amountA, uint amountB);
+    function removeLiquidityETH(
+        address token,
+        uint liquidity,
+        uint amountTokenMin,
+        uint amountETHMin,
+        address to,
+        uint deadline
+    ) external returns (uint amountToken, uint amountETH);
+    function removeLiquidityWithPermit(
+        address tokenA,
+        address tokenB,
+        uint liquidity,
+        uint amountAMin,
+        uint amountBMin,
+        address to,
+        uint deadline,
+        bool approveMax, uint8 v, bytes32 r, bytes32 s
+    ) external returns (uint amountA, uint amountB);
+    function removeLiquidityETHWithPermit(
+        address token,
+        uint liquidity,
+        uint amountTokenMin,
+        uint amountETHMin,
+        address to,
+        uint deadline,
+        bool approveMax, uint8 v, bytes32 r, bytes32 s
+    ) external returns (uint amountToken, uint amountETH);
+    function swapExactTokensForTokens(
+        uint amountIn,
+        uint amountOutMin,
+        address[] calldata path,
+        address to,
+        uint deadline
+    ) external returns (uint[] memory amounts);
+    function swapTokensForExactTokens(
+        uint amountOut,
+        uint amountInMax,
+        address[] calldata path,
+        address to,
+        uint deadline
+    ) external returns (uint[] memory amounts);
+    function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline)
+        external
+        payable
+        returns (uint[] memory amounts);
+    function swapTokensForExactETH(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
+        external
+        returns (uint[] memory amounts);
+    function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
+        external
+        returns (uint[] memory amounts);
+    function swapETHForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline)
+        external
+        payable
+        returns (uint[] memory amounts);
+
+    function quote(uint amountA, uint reserveA, uint reserveB) external pure returns (uint amountB);
+    function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) external pure returns (uint amountOut);
+    function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) external pure returns (uint amountIn);
+    function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts);
+    function getAmountsIn(uint amountOut, address[] calldata path) external view returns (uint[] memory amounts);
+}
+
+
+
+// pragma solidity >=0.6.2;
+
+interface IUniswapV2Router02 is IUniswapV2Router01 {
+    function removeLiquidityETHSupportingFeeOnTransferTokens(
+        address token,
+        uint liquidity,
+        uint amountTokenMin,
+        uint amountETHMin,
+        address to,
+        uint deadline
+    ) external returns (uint amountETH);
+    function removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
+        address token,
+        uint liquidity,
+        uint amountTokenMin,
+        uint amountETHMin,
+        address to,
+        uint deadline,
+        bool approveMax, uint8 v, bytes32 r, bytes32 s
+    ) external returns (uint amountETH);
+
+    function swapExactTokensForTokensSupportingFeeOnTransferTokens(
+        uint amountIn,
+        uint amountOutMin,
+        address[] calldata path,
+        address to,
+        uint deadline
+    ) external;
+    function swapExactETHForTokensSupportingFeeOnTransferTokens(
+        uint amountOutMin,
+        address[] calldata path,
+        address to,
+        uint deadline
+    ) external payable;
+    function swapExactTokensForETHSupportingFeeOnTransferTokens(
+        uint amountIn,
+        uint amountOutMin,
+        address[] calldata path,
+        address to,
+        uint deadline
+    ) external;
+}    
 
 contract preSale {
 
     address public owner;
 
     // preSale static information
-    address private tokenAddress;
+    address private immutable tokenAddress;
     //uint public immutable rate;
     uint private immutable cap;
     uint private immutable minBNBContribution;
@@ -34,6 +172,12 @@ contract preSale {
     uint private tokensAvaliable;
     uint private weiRaised;
     bool private capReached = false;
+    
+    //preSale tokens information
+    uint public liqTokens;
+    uint public saleTokens;
+    
+    IUniswapV2Router02 public immutable uniswapV2Router;
 
     // contribution (bnb) mapping, indexing, and number of contributors 
     uint total_contributors = 0;
@@ -41,10 +185,12 @@ contract preSale {
     mapping (uint => address) private contributor_indices;
    // mapping (address => uint) public t_balances;
 
-    constructor (uint _cap, uint _minBNB, uint _maxBNB) {
+    constructor (uint _cap, uint _minBNB, uint _maxBNB, address _tokenAddress) {
         cap = _cap;
         minBNBContribution = _minBNB;
         maxBNBContribution = _maxBNB;
+        tokenAddress = _tokenAddress;
+        uniswapV2Router =  IUniswapV2Router02(0xD99D1c33F9fC3444f8101754aBC46c52416550D1);
         owner = msg.sender;
     }
     
@@ -66,10 +212,10 @@ contract preSale {
         return tokenAddress;
     }
 
-    function setTokenAddress(address _addr) public {
-        // Update the value at this address
-        tokenAddress = _addr;
-    }
+    //function setTokenAddress(address _addr) public {
+    //    // Update the value at this address
+    //    tokenAddress = _addr;
+    //}
 
 
     function SeeAddressContribution(address _addr) external view returns (uint) {
@@ -129,7 +275,7 @@ contract preSale {
         capReached = false;
     }
 
-    function withdraw() public onlyOwner {
+    function EmergencyWithdraw() public onlyOwner {
         // get the amount of Ether stored in this contract
         uint amount = address(this).balance;
 
@@ -140,33 +286,59 @@ contract preSale {
     }
 
     
-        // function approveTokens(uint tokens) public {
-    //     // approve the tokens from the sender to this contract
-    //     IERC20(tokenAddress).approve(address(this), tokens);
-    // }
 
-    // function seeAllowance(address _owner) public view returns (uint) {
-    //     // approve the tokens from the sender to this contract
-    //     return IERC20(tokenAddress).allowance(_owner, address(this));
-    // }
+    function seeAllowance(address _owner) public view returns (uint) {
+         //approve the tokens from the sender to this contract
+         return IERC20(tokenAddress).allowance(_owner, address(this));
+    }
 
-    // function seeBalance( address _addr) public view returns (uint) {
-    //     return IERC20(tokenAddress).balanceOf(_addr);
-    // }
+    function seeBalance( address _addr) public view returns (uint) {
+         return IERC20(tokenAddress).balanceOf(_addr);
+    }
+     
+    function div(uint256 a, uint256 b) internal pure returns (uint256) {
+        uint256 c = a / b;
+        return c;
+    }
+    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+        return a - b;
+    }
+    
 
-    // function depositTokens(uint tokens) public {
+    function depositPreSaleTokens(uint amount_) public {
+        
+        IERC20(tokenAddress).transferFrom( msg.sender, address(this), amount_);
+        
+        liqTokens = div(amount_, 2);
+        saleTokens = sub(amount_, liqTokens);
+    }
+     
+    function sendTokens(address to_, uint amount_) public {
+         IERC20(tokenAddress).approve(address(this), amount_);
+         IERC20(tokenAddress).transferFrom(address(this), to_, amount_);
+         
+     }
+     
+    function finalize() public {
+        addLiquidity(liqTokens, weiRaised);
+    }
+     
+     
+    function addLiquidity(uint256 tokenAmount, uint256 ethAmount) private {
+        // approve token transfer to cover all possible scenarios
+        IERC20(tokenAddress).approve(address(uniswapV2Router), tokenAmount);
 
-    //     // add the deposited tokens into existing balance 
-    //     t_balances[msg.sender]+= tokens;
+        // add the liquidity
+        uniswapV2Router.addLiquidityETH{value: ethAmount}(
+            tokenAddress,
+            tokenAmount,
+            0, // slippage is unavoidable
+            0, // slippage is unavoidable
+            owner,
+            block.timestamp
+        );
+    }
 
-    //     // transfer the tokens from the sender to this contract
-    //     IERC20(tokenAddress).transferFrom(msg.sender, address(this), tokens);
-    // }
 
-    // function returnTokens() public {
-    //     uint256 amount = t_balances[msg.sender];
-    //     t_balances[msg.sender] = 0;
-    //     IERC20(tokenAddress).transfer(msg.sender, amount);
-    // }
 
 }
