@@ -163,7 +163,6 @@ contract preSale {
 
     // preSale static information
     address private immutable tokenAddress;
-    //uint public immutable rate;
     uint private immutable cap;
     uint private immutable minBNBContribution;
     uint private immutable maxBNBContribution;
@@ -172,10 +171,12 @@ contract preSale {
     uint private tokensAvaliable;
     uint private weiRaised;
     bool private capReached = false;
+    bool private open = false;
     
     //preSale tokens information
     uint public liqTokens;
     uint public saleTokens;
+    uint public rate;
     
     IUniswapV2Router02 public immutable uniswapV2Router;
 
@@ -211,12 +212,15 @@ contract preSale {
     function tokenAddress_() public view returns (address){
         return tokenAddress;
     }
-
-    //function setTokenAddress(address _addr) public {
-    //    // Update the value at this address
-    //    tokenAddress = _addr;
-    //}
-
+    function minBNB() public view returns (uint){
+        return minBNBContribution;
+    }
+    function maxBNB() public view returns (uint){
+        return maxBNBContribution;
+    }
+    function isOpen() public view returns (bool){
+        return open;
+    }
 
     function SeeAddressContribution(address _addr) external view returns (uint) {
         return contributions[_addr];
@@ -308,6 +312,8 @@ contract preSale {
     function depositPreSaleTokens(uint amount_) public {
         
         IERC20(tokenAddress).transferFrom( msg.sender, address(this), amount_);
+
+        open = true;
         
         liqTokens = div(amount_, 2);
         saleTokens = sub(amount_, liqTokens);
@@ -317,8 +323,14 @@ contract preSale {
          IERC20(tokenAddress).approve(address(this), amount_);
          IERC20(tokenAddress).transferFrom(address(this), to_, amount_);
          
-     }
+    }
      
+    function getRate() public view returns (uint){
+        //require blocks
+        uint rate_ = div(saleTokens, cap);
+        return rate_;
+    }
+
     function finalize() public {
         addLiquidity(liqTokens, weiRaised);
     }
@@ -337,6 +349,34 @@ contract preSale {
             owner,
             block.timestamp
         );
+    }
+
+    function tokenAllocation(address addr_) public view returns (uint) {
+        uint allocation = ( contributions[addr_] * getRate() );
+        return allocation;
+    }
+
+    function send_tokens_contribution() public {
+        // aprove the contract to spend the sale tokens
+        IERC20(tokenAddress).approve(address(this), saleTokens);
+
+        for (uint i = 0 ; i < total_contributors; i++) {
+            // get user bnb contribution
+            address temp_Address = contributor_indices[i];
+            uint contributor_bnb = contributions[temp_Address];
+            // calculate allocation
+            uint allocation = contributor_bnb * getRate();
+            //send allocated tokens to contributor
+            IERC20(tokenAddress).transferFrom(address(this), temp_Address, allocation);
+
+            delete contributor_indices[i];
+            delete contributions[temp_Address];
+
+            // !! Vulnerable against re-entracy attack !!
+
+
+        }
+
     }
 
 

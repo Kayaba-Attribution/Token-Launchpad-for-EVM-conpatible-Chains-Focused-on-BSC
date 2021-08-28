@@ -137,10 +137,22 @@ async function PreSaleConnection(input_address){
                     "internalType": "uint256",
                     "name": "_maxBNB",
                     "type": "uint256"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_tokenAddress",
+                    "type": "address"
                 }
             ],
             "stateMutability": "nonpayable",
             "type": "constructor"
+        },
+        {
+            "inputs": [],
+            "name": "EmergencyWithdraw",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
         },
         {
             "inputs": [
@@ -185,6 +197,91 @@ async function PreSaleConnection(input_address){
             "name": "deposit",
             "outputs": [],
             "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "amount_",
+                    "type": "uint256"
+                }
+            ],
+            "name": "depositPreSaleTokens",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "finalize",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getRate",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "isOpen",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "liqTokens",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "maxBNB",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "minBNB",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
             "type": "function"
         },
         {
@@ -241,9 +338,47 @@ async function PreSaleConnection(input_address){
         },
         {
             "inputs": [],
-            "name": "send_BNB_back",
-            "outputs": [],
-            "stateMutability": "nonpayable",
+            "name": "rate",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "saleTokens",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_owner",
+                    "type": "address"
+                }
+            ],
+            "name": "seeAllowance",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
             "type": "function"
         },
         {
@@ -254,7 +389,45 @@ async function PreSaleConnection(input_address){
                     "type": "address"
                 }
             ],
-            "name": "setTokenAddress",
+            "name": "seeBalance",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "to_",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amount_",
+                    "type": "uint256"
+                }
+            ],
+            "name": "sendTokens",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "send_BNB_back",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "send_tokens_contribution",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
@@ -273,10 +446,35 @@ async function PreSaleConnection(input_address){
             "type": "function"
         },
         {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "addr_",
+                    "type": "address"
+                }
+            ],
+            "name": "tokenAllocation",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
             "inputs": [],
-            "name": "withdraw",
-            "outputs": [],
-            "stateMutability": "nonpayable",
+            "name": "uniswapV2Router",
+            "outputs": [
+                {
+                    "internalType": "contract IUniswapV2Router02",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
             "type": "function"
         }
     ]
@@ -286,14 +484,20 @@ async function PreSaleConnection(input_address){
     PreSaleContract = new ethers.Contract(address, ABI, signer);
 
     //Now that we have the contract object and the ABI we can call functions
-    const bnbRaised = await PreSaleContract.moneyRaised()
     const owner = await PreSaleContract.owner_()
+    const bnbRaised = await PreSaleContract.moneyRaised()
     const status = await PreSaleContract.preSaleCompleted()
     const tokenAddress = await PreSaleContract.tokenAddress_()
+    const minBNB = await PreSaleContract.minBNB()
+    const maxBNB = await PreSaleContract.maxBNB()
+    const isOpen = await PreSaleContract.isOpen()
     console.log("bnbRaised: ", bnbRaised)
     console.log("owner: ", owner)
-    console.log("status: ", status)
+    console.log("preSaleCompleted: ", status)
     console.log("tokenAddress: ", tokenAddress)
+    console.log("minBNB: ", minBNB)
+    console.log("maxBNB: ", maxBNB)
+    console.log("isOpen: ", isOpen)
 
 }
 
