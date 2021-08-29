@@ -82,23 +82,26 @@ async function connect (){
         console.log("Unknwonn chain")
         document.querySelector("#chain").textContent = "Unknown chain"
     }
+
+    AnyTokenConnection()
 }
 
 
 // variable to save the contract object
 var AnyTokenContract;
+var connectedTokenAddress;
 // takes a contract address, creates a contract object and uses it to get the name, decimals, etc
-async function AnyTokenConnection(input_address){
+//*******************************
+// HARCODE THE TOKEN ADDRESS HERE
+//*******************************
 
-    //Make sure the address is an address
-    var validate = ethers.utils.isAddress(input_address)
-    if (validate == false){
-      console.log("NOT VALID")
+async function AnyTokenConnection(){
+  var input_address = document.querySelector('#token_address_input').value
+  if(input_address == ""){
+    input_address = "0x46844d25911501ce5436015ee6d2241335ec33e0"
+  } 
 
-        return
-    }
-    console.log("address " + validate)
-
+    console.log("--> CONNECTION TO BEP-20 START...")
     //This is not the real ABI this are just some of the standarts that we need
     const ABI = [
         "function name() view returns (string)",
@@ -111,37 +114,518 @@ async function AnyTokenConnection(input_address){
 
     //here the contract object is created
     const address = input_address
-    AnyTokenContract = new ethers.Contract(address, ABI, signer);
-    console.log("GOOD")
-    console.log(AnyTokenContract)
+    try{
+        AnyTokenContract = new ethers.Contract(address, ABI, signer);
+        connectedTokenAddress = input_address
+            //Now that we have the contract object and the ABI we can call functions
+        const name = await AnyTokenContract.name()
+        const symbol = await AnyTokenContract.symbol()
+        const decimals = await AnyTokenContract.decimals()
+        const balance = ethers.utils.formatEther( await AnyTokenContract.balanceOf(await signer.getAddress()) ) 
+        console.log("Name: ", name)
+        console.log("Symbol: ", symbol)
+        console.log("Decimals", decimals)
+        console.log("Balance", balance)
+        document.querySelector(".t_name").textContent = name;
+        document.querySelector("#t_symbol").textContent = symbol;
+        document.querySelector("#t_decimals").textContent = decimals;
+        document.querySelector("#t_balance").textContent = balance;
+        console.log("-- fend --")
+    }
+    catch(e){
+        console.log("No connection stablished, check wallet connection or token address")
+    }
 
-    //Now that we have the contract object and the ABI we can call functions
-    if(AnyTokenContract){
-      const name = await AnyTokenContract.name()
-      const symbol = await AnyTokenContract.symbol()
-      const decimals = await AnyTokenContract.decimals()
-      const balance = ethers.utils.formatEther( await AnyTokenContract.balanceOf(await signer.getAddress()) ) 
-      console.log("Name: ", name)
-      console.log("Symbol: ", symbol)
-      console.log("Decimals", decimals)
-      console.log("Balance", balance)
-      document.querySelector("#t_name").textContent = name;
-      document.querySelector("#t_symbol").textContent = symbol;
-      document.querySelector("#t_decimals").textContent = decimals;
-      document.querySelector("#t_balance").textContent = balance;
+
+
+
+}
+
+
+// variable to save the contract object
+var PreSaleContract;
+// takes a contract address, creates a contract object and uses it to get the name, decimals, etc
+async function PreSaleConnection(){
+    var input_address = document.querySelector('#presale_address_input').value
+    if(input_address == ""){
+      input_address = "0x3D2745C04B68F0f53a34931eB86172FAb14D3761"
+    } 
+    console.log("--> CONNECTION TO PRESALE CONTRACT...")
+    
+    //This is not the real ABI this are just some of the standarts that we need
+    const ABI = [
+      {
+          "inputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "_cap",
+                  "type": "uint256"
+              },
+              {
+                  "internalType": "uint256",
+                  "name": "_minBNB",
+                  "type": "uint256"
+              },
+              {
+                  "internalType": "uint256",
+                  "name": "_maxBNB",
+                  "type": "uint256"
+              },
+              {
+                  "internalType": "address",
+                  "name": "_tokenAddress",
+                  "type": "address"
+              }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+      },
+      {
+          "inputs": [],
+          "name": "EmergencyWithdraw",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+      },
+      {
+          "inputs": [
+              {
+                  "internalType": "address",
+                  "name": "_addr",
+                  "type": "address"
+              }
+          ],
+          "name": "SeeAddressContribution",
+          "outputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "cap_",
+          "outputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "claimTokens",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+      },
+      {
+          "inputs": [
+              {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+              }
+          ],
+          "name": "contributions",
+          "outputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "deposit",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+      },
+      {
+          "inputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "amount_",
+                  "type": "uint256"
+              }
+          ],
+          "name": "depositPreSaleTokens",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "finalize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "isOpen",
+          "outputs": [
+              {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "liqTokens",
+          "outputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "liqTokens_",
+          "outputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "maxBNB",
+          "outputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "minBNB",
+          "outputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "moneyRaised",
+          "outputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+              {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "owner_",
+          "outputs": [
+              {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "preSaleCompleted",
+          "outputs": [
+              {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "rate",
+          "outputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "saleTokens",
+          "outputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [
+              {
+                  "internalType": "address",
+                  "name": "_owner",
+                  "type": "address"
+              }
+          ],
+          "name": "seeAllowance",
+          "outputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [
+              {
+                  "internalType": "address",
+                  "name": "_addr",
+                  "type": "address"
+              }
+          ],
+          "name": "seeBalance",
+          "outputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [
+              {
+                  "internalType": "address",
+                  "name": "to_",
+                  "type": "address"
+              },
+              {
+                  "internalType": "uint256",
+                  "name": "amount_",
+                  "type": "uint256"
+              }
+          ],
+          "name": "sendTokens",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "send_BNB_back",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "send_tokens_contribution",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "tokenAddress_",
+          "outputs": [
+              {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [
+              {
+                  "internalType": "address",
+                  "name": "addr_",
+                  "type": "address"
+              }
+          ],
+          "name": "tokenAllocation",
+          "outputs": [
+              {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [],
+          "name": "uniswapV2Router",
+          "outputs": [
+              {
+                  "internalType": "contract IUniswapV2Router02",
+                  "name": "",
+                  "type": "address"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      }
+  ]
+
+    try{
+        //here the contract object is created
+        const address = input_address
+        PreSaleContract = new ethers.Contract(address, ABI, signer);
+
+        //Now that we have the contract object and the ABI we can call functions
+        const owner = await PreSaleContract.owner_()
+        const bnbRaised = ethers.utils.formatEther(await PreSaleContract.moneyRaised())
+        const status = await PreSaleContract.preSaleCompleted()
+        const tokenAddress = await PreSaleContract.tokenAddress_()
+        const minBNB = ethers.utils.formatEther(await PreSaleContract.minBNB())
+        const maxBNB = ethers.utils.formatEther(await PreSaleContract.maxBNB())
+        const cap = ethers.utils.formatEther(await PreSaleContract.cap_())
+        const isOpen = await PreSaleContract.isOpen()
+        const myAllocation = ethers.utils.formatEther(await PreSaleContract.tokenAllocation(await signer.getAddress()))
+        const myContribution = ethers.utils.formatEther(await PreSaleContract.SeeAddressContribution(await signer.getAddress()))
+        console.log("isOpen: ", isOpen)
+        console.log("preSaleCompleted: ", status)
+        console.log("bnbRaised: ",bnbRaised)
+        console.log("cap: ",cap)
+        console.log("minBNB: ", minBNB)
+        console.log("maxBNB: ", maxBNB)
+        console.log("myContribution: ", myContribution)
+        console.log("myAllocation: ", myAllocation)
+        console.log("tokenAddress: ", tokenAddress)
+        console.log("owner: ", owner)
+
+        document.querySelector("#bnbRaised").textContent = bnbRaised;
+        document.querySelector("#cap").textContent = cap;
+        document.querySelector("#minBNB").textContent = minBNB;
+        document.querySelector("#maxBNB").textContent = maxBNB;
+        document.querySelector("#myContribution").textContent = myContribution;
+        document.querySelector("#myAllocation").textContent = myAllocation;
+
+        console.log("-- fend --")
+    }
+    catch(e){
+        console.log("No connection stablished, check wallet connection or token/presale address")
+        console.log(e)
+    }
+
+}
+
+
+async function depositBNB(){
+  //bnb = ethers.utils.parseEther( bnb_ )
+
+  var temp_value = document.querySelector('#presale_bnb_input').value 
+  console.log(temp_value)
+  try{
+    console.log(await PreSaleContract.owner_())
+    const sent = await PreSaleContract.deposit({ value: ethers.utils.parseEther(temp_value) })
+    const receipt = await sent.wait();
+    console.log("Status: ",receipt["status"])
+    console.log("Hash: ",receipt["transactionHash"])
+    if (receipt["status"] == 1){
+      document.querySelector("#load_approve").textContent = "Success";
+      console.log(":)")
     }
     else{
-      console.log("NULL")
+        document.querySelector("#load_approve").textContent = "Failed";
     }
+  }
+  catch(e){
+    console.log("No deposit done")
+    console.log(e)
+  }
+}
 
+async function approvePreSale(){
+  //bnb = ethers.utils.parseEther( bnb_ )
+
+  const sent = await AnyTokenContract.approve(connectedTokenAddress, ethers.BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"))
+  const receipt = await sent.wait();
+  console.log("Receipt: ",receipt)
+  console.log("Status: ",receipt["status"])
+  console.log("Hash: ",receipt["transactionHash"])
+  console.log("From: ",receipt["from"])
 
 }
 
-function sayHello() {
-  var input_ = document.querySelector('#token_address_input').value
-  console.log("Input: ", input_)
-  AnyTokenConnection(input_)
+async function depositPreSaleTokens_(){
+  //bnb = ethers.utils.parseEther( bnb_ )
+  var dev_token_balance = await AnyTokenContract.balanceOf(await signer.getAddress())
+  const sent = await PreSaleContract.depositPreSaleTokens(dev_token_balance)
+  const receipt = await sent.wait();
+  console.log("Receipt: ",receipt)
+  console.log("Status: ",receipt["status"])
+  console.log("Hash: ",receipt["transactionHash"])
+  console.log("From: ",receipt["from"])
+
 }
+
+
 
 var pancake_factory;
 async function addLiquidity(){
@@ -182,29 +666,43 @@ const MainContent = ({title, subtitle, logo}) => {
     <Button onClick={connect} variant="contained" color="primary" disableElevation >
           Connect Wallet
     </Button>
-    
-    <p>Address: <span id="address">-</span></p>
-    <p>balance: <span id="balance">0</span> BNB</p>
-    <p>chain: <span id="chain">-</span></p>
+    <div class="wallet-info">
+      <p>Address: <span id="address">-</span></p>
+      <p>balance: <span id="balance">0</span> BNB</p>
+      <p>chain: <span id="chain">-</span></p>
+    </div>
 
-	  <p>Enter any token, examples are:</p>
-    <p>0x46844d25911501ce5436015ee6d2241335ec33e0</p>
-    <p>0x5dac1ec9229440ee26b13d2c5d23a0917777ea49</p>
     <input id="token_address_input"></input>
-    <p></p>
-    <Button onClick={sayHello} variant="contained" color="primary" disableElevation >
-          Connect To Token
-    </Button>
-    <p>Name: <span id="t_name">-</span></p>
-    <p>Symbol: <span id="t_symbol">-</span></p>
-    <p>Decimals: <span id="t_decimals">-</span></p>
-    <p>Balance: <span id="t_balance">-</span></p>
 
-    <Button onClick={addLiquidity} variant="contained" color="primary" disableElevation >
-          Approve Token
+    <p>Name: <span class="t_name">-</span> | Symbol: <span id="t_symbol">-</span></p>
+
+
+    <input id="presale_address_input"></input>
+    <Button onClick={PreSaleConnection} variant="contained" color="primary" disableElevation >
+          Connect to presale
+    </Button>
+    <div class="presale-info">
+      <p>Total BNB Raised: <span id="bnbRaised">0</span> BNB</p>
+      <p>BNB Cap: <span id="cap">0</span> BNB</p>
+      <p>Min BNB Contribution: <span id="minBNB">0</span> BNB</p>
+      <p>Max BNB Contribution: <span id="maxBNB">0</span> BNB</p>
+      <p>My BNB Contribution: <span id="myContribution">0</span> BNB</p>
+      <p>My Token Allocation: <span id="myAllocation">0</span><span class="t_name"></span></p>
+      <p>BNB Cap: <span id="cap">0</span> BNB</p>
+      <input id="presale_bnb_input"></input>
+    </div>
+    <Button onClick={depositBNB} variant="contained" color="primary" disableElevation >
+          Contribute BNB
     </Button>
 
     <p><span id="load_approve"></span></p>
+
+    <Button onClick={approvePreSale} variant="contained" color="primary" disableElevation >
+          APPROVE
+    </Button>
+    <Button onClick={depositPreSaleTokens_} variant="contained" color="primary" disableElevation >
+          DEPOSIT TOKENS
+    </Button>
 	  
 	  </div>
   )
