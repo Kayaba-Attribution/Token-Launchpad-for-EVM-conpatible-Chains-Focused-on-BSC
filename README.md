@@ -42,6 +42,8 @@ On the user side, our platform will scan the project's source code for common vu
 
 - [Project WhitePaper](https://docs.google.com/document/d/1z46EiQLBtJiaQVPaq94mIS1pxNQedxTsbeXa56R0aKs/edit)
 - [Final Presentation](https://docs.google.com/presentation/d/17jICGBR9S8UtsoFhkAk173dG9ozMni0h-7Mu0or3pDA/edit?usp=sharing)
+# LIVE DEMO and presentation (11 min || 7 min only demo)    :)
+- [Presentation and Live Demo](https://drive.google.com/file/d/1qlO9J8mauGLfES8k4wfLzpkS8UkQUT_h/view?usp=sharing)
 
 
 
