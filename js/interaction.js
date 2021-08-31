@@ -95,7 +95,7 @@ async function AnyTokenConnection(input_address){
         const name = await AnyTokenContract.name()
         const symbol = await AnyTokenContract.symbol()
         const decimals = await AnyTokenContract.decimals()
-        const balance = ethers.utils.formatEther( await AnyTokenContract.balanceOf(await signer.getAddress()) ) 
+        const balance = await AnyTokenContract.balanceOf(await signer.getAddress()) 
         console.log("Name: ", name)
         console.log("Symbol: ", symbol)
         console.log("Decimals", decimals)

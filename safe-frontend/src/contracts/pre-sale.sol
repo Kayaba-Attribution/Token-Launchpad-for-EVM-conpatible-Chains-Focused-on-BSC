@@ -423,11 +423,6 @@ contract preSale {
         saleTokens = sub(amount_, liqTokens);
     }
 
-    //no use
-    function sendTokens(address to_, uint256 amount_) public {
-        IERC20(tokenAddress).approve(address(this), amount_);
-        IERC20(tokenAddress).transferFrom(address(this), to_, amount_);
-    }
 
     function finalize() public {
         addLiquidity(liqTokens, weiRaised);
@@ -448,10 +443,6 @@ contract preSale {
         );
     }
 
-    // function getRate() public view returns (uint){
-    //     uint rate_ = div(saleTokens, cap);
-    //     return rate_;
-    // }
 
     function tokenAllocation(address addr_) public view returns (uint256) {
         uint256 allocation = (
@@ -460,29 +451,6 @@ contract preSale {
         return allocation;
     }
 
-    function send_tokens_contribution() public {
-        // aprove the contract to spend the sale tokens
-        //IERC20(tokenAddress).approve(address(this), saleTokens);
-
-        for (uint256 i = 0; i < total_contributors; i++) {
-            // get user bnb contribution
-            address temp_Address = contributor_indices[i];
-            // calculate allocation
-            uint256 allocation = tokenAllocation(temp_Address);
-            //send allocated tokens to contributor
-            IERC20(tokenAddress).approve(address(this), allocation);
-            IERC20(tokenAddress).transferFrom(
-                address(this),
-                temp_Address,
-                allocation
-            );
-
-            delete contributor_indices[i];
-            delete contributions[temp_Address];
-
-            // !! Vulnerable against re-entracy attack !!
-        }
-    }
 
     function claimTokens() public {
         uint256 amount_ = tokenAllocation(msg.sender);

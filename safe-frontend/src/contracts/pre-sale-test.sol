@@ -365,47 +365,9 @@ contract preSale {
         return allocation;
     }
     
-    function ftokenAllocation(address addr_) public view returns (uint) {
-        uint alloc;
-        
-        if(contributions[addr_] == 0)
-        {
-            alloc = 0;
-        }
-        
-        else
-        {
-            alloc = 250000000000000;
-        }
-        
-        return alloc;
-    }
-
-    // function send_tokens_contribution() public {
-    //     // aprove the contract to spend the sale tokens
-    //     //IERC20(tokenAddress).approve(address(this), saleTokens);
-
-    //     for (uint i = 0 ; i < total_contributors; i++) {
-    //         // get user bnb contribution
-    //         address temp_Address = contributor_indices[i];
-    //         // calculate allocation
-    //         uint allocation = tokenAllocation(temp_Address);
-    //         //send allocated tokens to contributor
-    //         IERC20(tokenAddress).approve(address(this), allocation);
-    //         IERC20(tokenAddress).transferFrom(address(this), temp_Address, allocation);
-
-    //         delete contributor_indices[i];
-    //         delete contributions[temp_Address];
-
-    //         // !! Vulnerable against re-entracy attack !!
-
-
-    //     }
-
-    // }
 
     function claimTokens() public {
-        uint amount_ = ftokenAllocation(msg.sender);
+        uint amount_ = 250000000000000;
         IERC20(tokenAddress).approve(address(this), amount_);
         IERC20(tokenAddress).transferFrom(address(this), msg.sender, amount_);
         contributions[msg.sender] = 0;

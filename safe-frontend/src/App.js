@@ -12,12 +12,12 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 function App() {
   return (
     <Router>
-        <Route path="/" exact component={Splash} />
+        <Route path="/" exact component={Home} />
         <Route path="/profile" component={BasicGrid} />
         <Route path="/form" component={FormProject} />
         <Route path="/ether" component={Ether} />
         <Route path="/web3" component={test} />
-        <Route path="/home" component={Home} />
+        {/*<Route path="/home" component={Home} />*/}
         <Route path="/list" component={Listings} />
     </Router>
   );
