@@ -2,6 +2,7 @@
 
 - This project was build as the capstone project of [Preethi Kasireddy's Ethereum Bootcamp](https://maven.com/preethi/ethereum-bootcamp).
 - This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- [Presentation and Live Demo](https://drive.google.com/file/d/1qlO9J8mauGLfES8k4wfLzpkS8UkQUT_h/view?usp=sharing).
 
 ## PURPOSE
 
