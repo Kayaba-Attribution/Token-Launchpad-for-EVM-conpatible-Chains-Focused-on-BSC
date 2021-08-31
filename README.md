@@ -1,7 +1,7 @@
 # Secure and Improved Token Launchpad for EVM conpatible Chains (Focused on BSC)
 
-This project was build as the capstone project of [Preethi Kasireddy's Ethereum Bootcamp](https://maven.com/preethi/ethereum-bootcamp).
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- This project was build as the capstone project of [Preethi Kasireddy's Ethereum Bootcamp](https://maven.com/preethi/ethereum-bootcamp).
+- This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## PURPOSE
 
@@ -30,13 +30,18 @@ On the user side, our platform will scan the project's source code for common vu
 
 ## IMPLEMENTATION
 
-For this MVP we are using the smart contract for ‘milestone’ data, Google Sheets as a temporary smart contract list “database” (1) and ReactJS for the front end (2).
-Using the token address submitted on the project form (3) we pull the token details from the blockchain using Ethers.js (4) and compile the pre-sale contract  (5) with various parameters passed to the contract constructor. We will prioritize storing as much important token information in a smart contract as possible.
-We pull the contract source code from bscscan testnet (6), scan it for common vulnerabilities, and display the results.
-When the developer initializes the pre-sale the compiled contract is deployed onto the blockchain (7).
-Users can see the amount of BNB raised, deposit bnb (within the pre-sale min and max) only once (7).
-Once the cap is reached, the contract won't allow any more deposits, will add liquidity, lock it and allow users to claim their tokens (7).
+- For this MVP we are using the smart contract for ‘milestone’ data, Google Sheets as a temporary smart contract list “database” (1) and ReactJS for the front end (2).
+- Using the token address submitted on the project form (3) we pull the token details from the blockchain using Ethers.js (4) and compile the pre-sale contract  (5) with various parameters passed to the contract constructor. We will prioritize storing as much important token information in a smart contract as possible.
+- We pull the contract source code from bscscan testnet (6), scan it for common vulnerabilities, and display the results.
+- When the developer initializes the pre-sale the compiled contract is deployed onto the blockchain (7).
+- Users can see the amount of BNB raised, deposit bnb (within the pre-sale min and max) only once (7).
+- Once the cap is reached, the contract won't allow any more deposits, will add liquidity, lock it and allow users to claim their tokens (7).
 
 
-## ARCHITECTURE
+## MORE
+
+- [Project WhitePaper](https://docs.google.com/document/d/1z46EiQLBtJiaQVPaq94mIS1pxNQedxTsbeXa56R0aKs/edit)
+- [Final Presentation](https://docs.google.com/presentation/d/17jICGBR9S8UtsoFhkAk173dG9ozMni0h-7Mu0or3pDA/edit?usp=sharing)
+
+
 
